@@ -124,25 +124,6 @@ header {
   color: #555;
 }
 
-/* Кнопка "Load More" */
-.load-more {
-  padding: 12px 24px;
-  font-size: 16px;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.load-more:hover {
-  background-color: #218838;
-}
-
-.load-more:active {
-  background-color: #1e7e34;
-}
 
 /* Елементи для станів */
 .loading {

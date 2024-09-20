@@ -5,14 +5,14 @@ import iziToast from 'izitoast';
 
 const form = document.querySelector('#search-form');
 const input = document.querySelector('input[name="searchQuery"]');
-const loadMoreBtn = document.querySelector('.load-more');
+
 let currentPage = 1;
 let currentQuery = '';
 
 form.addEventListener('submit', onSearch);
-loadMoreBtn.addEventListener('click', onLoadMore);
 
-async function onSearch(event) {
+
+function onSearch(event) {
   event.preventDefault();
   currentQuery = input.value.trim();
 
@@ -24,26 +24,32 @@ async function onSearch(event) {
   clearGallery();
   currentPage = 1;
 
-  try {
-    const data = await fetchImages(currentQuery, currentPage);
-    if (data.hits.length === 0) {
-      showErrorMessage('Sorry, there are no images matching your search query. Please try again!');
-      return;
-    }
-    renderImages(data.hits);
-    loadMoreBtn.style.display = 'block';
-  } catch (error) {
-    showErrorMessage('Failed to fetch images. Please try again later.');
-  }
+  fetchImages(currentQuery, currentPage)
+    .then(data => {
+      if (data.hits.length === 0) {
+        showErrorMessage('Sorry, there are no images matching your search query. Please try again!');
+        loadMoreBtn.style.display = 'none';
+        return;
+      }
+      renderImages(data.hits);
+      loadMoreBtn.style.display = data.hits.length < 12 ? 'none' : 'block';
+    })
+    .catch(error => {
+      showErrorMessage('Failed to fetch images. Please try again later.');
+    });
 }
 
-async function onLoadMore() {
+function onLoadMore() {
   currentPage += 1;
 
-  try {
-    const data = await fetchImages(currentQuery, currentPage);
-    renderImages(data.hits);
-  } catch (error) {
-    showErrorMessage('Failed to fetch more images.');
-  }
+  fetchImages(currentQuery, currentPage)
+    .then(data => {
+      renderImages(data.hits);
+      if (data.hits.length < 12) {
+        loadMoreBtn.style.display = 'none';
+      }
+    })
+    .catch(error => {
+      showErrorMessage('Failed to fetch more images.');
+    });
 }
